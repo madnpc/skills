@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// @ts-nocheck
+
 // 技能上游同步工具 —— 检测每个本地技能对应的上游源文件是否更新。
 // 只有上游版本（upstreamDir 的最新 commit SHA）变化时才提示，并把上游 diff 暂存供人手动本地化。
 // 脚本不调用 AI、不自动改写 skills/。详见 docs/specs/2026-06-24-skill-upstream-sync-spec.md。
@@ -12,6 +14,7 @@
 //   node scripts/sync-skills.mjs status               查看各技能当前记录的版本与待 review 状态
 //
 // 环境变量: GITHUB_TOKEN（可选）—— 提高 GitHub API 限流额度。
+// 未设置时自动尝试 `gh auth token`（gh 未安装或未登录则匿名访问，60 次/小时）。
 
 import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -48,9 +51,21 @@ async function saveState(state) {
   await writeFile(STATE_PATH, JSON.stringify(state, null, 2) + '\n');
 }
 
+let API_TOKEN = null;
+
+async function resolveToken() {
+  if (process.env.GITHUB_TOKEN) return process.env.GITHUB_TOKEN;
+  try {
+    const { stdout } = await execFileP('gh', ['auth', 'token']);
+    return stdout.trim() || null;
+  } catch {
+    return null; // gh 未安装或未登录，匿名访问
+  }
+}
+
 function ghHeaders() {
   const headers = { 'Accept': 'application/vnd.github+json', 'User-Agent': 'npc404-skill-sync' };
-  if (process.env.GITHUB_TOKEN) headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
+  if (API_TOKEN) headers['Authorization'] = `Bearer ${API_TOKEN}`;
   return headers;
 }
 
@@ -61,8 +76,12 @@ async function latestCommit(skill) {
   const res = await fetch(url, { headers: ghHeaders() });
   if (!res.ok) {
     const remaining = res.headers.get('x-ratelimit-remaining');
-    const hint = res.status === 403 && remaining === '0'
-      ? '（GitHub API 限流，设置 GITHUB_TOKEN 提额）' : '';
+    let hint = '';
+    if (res.status === 403 && remaining === '0') {
+      const reset = Number(res.headers.get('x-ratelimit-reset'));
+      const when = reset ? new Date(reset * 1000).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) : '';
+      hint = `（GitHub API 限流${when ? `，${when} 重置` : ''}；登录 gh CLI 或设置 GITHUB_TOKEN 提额）`;
+    }
     throw new Error(`查询 commit 失败 ${res.status} ${skill.repo}/${skill.upstreamDir} ${hint}`);
   }
   const data = await res.json();
@@ -138,6 +157,7 @@ async function cmdCheck(config, state, only) {
   await mkdir(DIFF_DIR, { recursive: true });
   const changed = [];
   const fresh = [];
+  const failed = [];
   console.log(paint('bold', `检测上游变化（${skills.length} 个技能）…\n`));
 
   for (const [name, skill] of skills) {
@@ -152,6 +172,7 @@ async function cmdCheck(config, state, only) {
       latest = await latestCommit(skill);
     } catch (err) {
       console.log(`  ${paint('red', '✗')} ${name} ${paint('red', err.message)}`);
+      failed.push(name);
       continue;
     }
     if (latest.sha === prev.lastCommit) {
@@ -183,9 +204,13 @@ async function cmdCheck(config, state, only) {
 
   await saveState(state);
   console.log('');
-  if (changed.length === 0 && fresh.length === 0) {
+  if (changed.length === 0 && fresh.length === 0 && failed.length === 0) {
     console.log(paint('green', '所有技能均为最新，无需处理。'));
     return;
+  }
+  if (failed.length > 0) {
+    console.log(paint('red', `${failed.length} 个技能查询失败（见上方 ✗），其上游状态未知。`));
+    process.exitCode = 1;
   }
   if (changed.length > 0) {
     console.log(paint('bold', `${changed.length} 个技能上游有更新，待本地化:`));
@@ -255,6 +280,7 @@ async function main() {
     process.exit(1);
   }
   const state = await loadJson(STATE_PATH, {});
+  if (cmd === 'init' || cmd === 'check') API_TOKEN = await resolveToken();
 
   switch (cmd) {
     case 'init': return cmdInit(config, state, arg);
@@ -270,7 +296,7 @@ async function main() {
         '  node scripts/sync-skills.mjs accept <skill|--all> 本地化完成后推进版本号',
         '  node scripts/sync-skills.mjs status               查看各技能版本与待办状态',
         '',
-        '环境变量 GITHUB_TOKEN（可选）提高 API 限流额度。',
+        '环境变量 GITHUB_TOKEN（可选）提高 API 限流额度；未设置时自动尝试 gh auth token。',
       ].join('\n'));
       return;
     default:

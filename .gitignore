@@ -75,3 +75,6 @@ scripts/.skill-sync/
 docs/specs/**
 docs/.planning/**
 .codegraph/
+
+# 技能评测工作区（skill-creator 产物，开发期临时）
+.claude/skills/*-workspace/

@@ -33,6 +33,8 @@ node scripts/sync-skills.mjs status
 2. 对照 diff，把上游变更重新本地化（中文改写）写回 `skills/<skill>/`。
 3. `accept <skill>` —— 锁定版本，baseline 更新到最新上游。
 
+这套流程有配套的项目级技能 [`.claude/skills/sync-skills`](../.claude/skills/sync-skills/SKILL.md)，由协作代理代跑：check 之后逐个研判 diff 是有效更新还是噪音，报告确认后再本地化、accept。
+
 ### 文件说明
 
 | 路径 | 是否提交 | 说明 |
@@ -43,7 +45,7 @@ node scripts/sync-skills.mjs status
 
 ### 环境变量
 
-- `GITHUB_TOKEN`（可选）—— 提高 GitHub API 限流额度。未认证为 60 次/小时，对 7 个技能足够，限流时再设置。
+- `GITHUB_TOKEN`（可选）—— 提高 GitHub API 限流额度。未设置时脚本会自动尝试 `gh auth token`；两者都没有则匿名访问（60 次/小时，对 7 个技能足够，限流时再登录 gh 或设置 token）。
 
 ### 新增 / 调整被跟踪的技能
 

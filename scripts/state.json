@@ -1,8 +1,8 @@
 {
   "brainstorming": {
     "repo": "obra/superpowers",
-    "lastCommit": "29c0b1b7db4b8ab488c7ef99bef93068576a60fa",
-    "lastSyncedAt": "2026-06-17T00:02:33Z",
+    "lastCommit": "711d895ce736cbcc5fb0c219ea3f49277f17fa8c",
+    "lastSyncedAt": "2026-06-30T18:29:15Z",
     "pendingCommit": null,
     "pendingDate": null
   },
@@ -22,8 +22,8 @@
   },
   "tdd": {
     "repo": "mattpocock/skills",
-    "lastCommit": "ee8bae40062cd6b435073368ed0c540f48c35862",
-    "lastSyncedAt": "2026-06-17T14:15:11Z",
+    "lastCommit": "80e9dcc6857f16cc08b8e5b190393ee7591517e0",
+    "lastSyncedAt": "2026-06-30T08:48:57Z",
     "pendingCommit": null,
     "pendingDate": null
   },

@@ -45,3 +45,5 @@ node scripts/sync-skills.mjs init [skill]          # 首次/新增技能时记�
 ```
 
 典型流程：`check` 看哪些技能上游变了（diff 在 `scripts/.skill-sync/diffs/`）→ 对照 diff 把变更重新本地化写回 `skills/<skill>/` → `accept` 锁定版本。映射关系配置在 [`scripts/sync.config.json`](scripts/sync.config.json)，版本记录在 `scripts/state.json`（唯一需提交的产物）。详见 [`scripts/README.md`](scripts/README.md)。
+
+这套流程也封装成了项目级技能 [`.claude/skills/sync-skills`](.claude/skills/sync-skills/SKILL.md)（仓库自研，不在 `skills/` 上游跟踪范围内）：在本仓库对协作代理说"同步一下上游技能"即可触发，它会运行 `check`、逐个研判 diff 是有效更新还是排版笔误类噪音、报告建议，经确认后完成本地化并 `accept`。
