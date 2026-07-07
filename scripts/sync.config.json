@@ -67,7 +67,15 @@
       "upstreamDir": "skills/planning-with-files-zh",
       "localDir": "skills/planning-with-files-zh",
       "files": [
-        "SKILL.md"
+        "SKILL.md",
+        "scripts/check-complete.sh",
+        "scripts/check-complete.ps1",
+        "scripts/init-session.sh",
+        "scripts/init-session.ps1",
+        "scripts/session-catchup.py",
+        "templates/findings.md",
+        "templates/progress.md",
+        "templates/task_plan.md"
       ]
     }
   }
