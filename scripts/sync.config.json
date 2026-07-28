@@ -52,6 +52,24 @@
         "SKILL.md"
       ]
     },
+    "grill-me": {
+      "repo": "mattpocock/skills",
+      "branch": "main",
+      "upstreamDir": "skills/productivity/grill-me",
+      "localDir": "skills/grill-me",
+      "files": [
+        "SKILL.md"
+      ]
+    },
+    "grilling": {
+      "repo": "mattpocock/skills",
+      "branch": "main",
+      "upstreamDir": "skills/productivity/grilling",
+      "localDir": "skills/grilling",
+      "files": [
+        "SKILL.md"
+      ]
+    },
     "karpathy-guidelines": {
       "repo": "multica-ai/andrej-karpathy-skills",
       "branch": "main",

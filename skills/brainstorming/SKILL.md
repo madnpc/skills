@@ -18,6 +18,7 @@ Do only these things:
 - Clarify the need, intended outcome, constraints, and success criteria.
 - Expand 2–3 genuinely distinct directions when alternatives matter.
 - Compare trade-offs and recommend a direction when the evidence supports one.
+- Apply YAGNI ruthlessly: remove features and decisions that are not needed to meet the success criteria from every direction and from the recommended design.
 - Help the user make or confirm the decision.
 - Write the confirmed decision as one spec.
 
