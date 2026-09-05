@@ -1,0 +1,4 @@
+interface:
+  display_name: "Domain Modeling"
+  short_description: "构建和完善领域模型、统一术语，并记录必要的架构决策"
+  default_prompt: "Use $domain-modeling to sharpen this project's domain language and record qualifying decisions."

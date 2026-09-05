@@ -10,13 +10,15 @@
 | --- | --- | --- |
 | `brainstorming` | 编码前、需求或方向仍不清楚时梳理模糊想法；分段验证设计后保存轻量决策文档（不自动建计划或串联实现类技能）：想法不清楚、需求澄清、方案对比、取舍分析、决策、设计文档。 | [obra/superpowers](https://github.com/obra/superpowers/tree/main) |
 | `codebase-design` | 方向明确后设计模块边界与接口：代码库设计、模块设计、接口设计、模块边界、可测试性。 | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| `domain-modeling` | 构建和完善领域模型，统一 `CONTEXT.md` 术语，并为少数重要取舍记录 ADR：领域建模、统一术语、术语表、上下文地图、架构决策记录。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/domain-modeling) |
 | `planning-with-files-zh` | 复杂实施或跨会话工作；规划保存于 `docs/.planning/<plan-id>/`：任务规划、复杂实现、实施计划、多步骤规划、进度跟踪。 | [othmanadi/planning-with-files](https://github.com/othmanadi/planning-with-files) |
 | `diagnosing-bugs` | 故障与性能问题诊断：修 Bug、排查问题、报错、测试失败、性能回归。 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `tdd` | 高风险逻辑或需要回归保护的改动：测试驱动开发、先写测试、红绿重构、回归测试、集成测试。 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `karpathy-guidelines` | 代码改动易过度设计、范围蔓延或需保守审查时：避免过度设计、最小改动、范围控制、明确假设、验收标准、保守审查。 | [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) |
 | `handoff` | 将未完成工作移交给新的代理或会话：工作交接、上下文交接、任务移交。 | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| `grill-me` | 仅由用户明确调用，启动高强度逐题访谈以澄清并压力测试计划、设计、决策或想法：拷问我、追问到底、深挖问题。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me) |
-| `grilling` | `grill-me` 的可复用访谈核心；沿决策树逐个解决依赖，每题给出建议，确认共识前不实施：压力测试、挑刺、决策树。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/grilling) |
+| `grill-me` | 仅由用户明确调用，启动按决策前沿分轮推进的高强度访谈，以澄清并压力测试计划、设计、决策或想法：拷问我、追问到底、深挖问题。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me) |
+| `grilling` | `grill-me` 的可复用访谈核心；按当前决策前沿分轮追问，每题给出建议，确认共识前不实施：压力测试、挑刺、决策树。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/grilling) |
+| `grill-with-docs` | 仅由用户明确调用；在压力测试设计的同时更新领域术语表，并为符合条件的决定记录 ADR：带文档拷问、边问边写文档、同步术语表、同步 ADR。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs) |
 
 ### 在 Claude Code 与 Codex 中通用
 
@@ -25,7 +27,7 @@
 - **发现目录**：Claude Code 读取 `~/.claude/skills/` 或项目 `.claude/skills/`；Codex 读取 `~/.codex/skills/` 或项目 `.codex/skills/`。把 `skills/<name>` 软链或复制到对应目录即可（本机经 `~/.cc-switch/skills/` 中转，两端软链同一份副本）。
 - **编写约定**：正文不得硬性依赖单一客户端的专有工具；提及时用举例式表述并给出无此工具时的替代做法（如 DESIGN-IT-TWICE 的子代理并行 vs 顺序产出）。
 - **frontmatter 兼容性**：`name` 与 `description` 是两端共同支持的字段；Claude Code 专有字段（如 `handoff` 的 `argument-hint`、`disable-model-invocation`）会被 Codex 忽略——注意这意味着 `disable-model-invocation` 在 Codex 中不生效，模型可能自主触发该技能。
-- **显式调用技能**：`grill-me` 通过 `agents/openai.yaml` 在 Codex 中关闭隐式调用；其他客户端由 description 中的“仅在用户明确调用”约束触发时机。
+- **显式调用技能**：`grill-me` 和 `grill-with-docs` 通过 `agents/openai.yaml` 在 Codex 中关闭隐式调用；其他客户端由 description 中的“仅在用户明确调用”约束触发时机。
 
 ### 引用来源
 

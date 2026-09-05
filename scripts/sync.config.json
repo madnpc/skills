@@ -23,6 +23,17 @@
         "DESIGN-IT-TWICE.md"
       ]
     },
+    "domain-modeling": {
+      "repo": "mattpocock/skills",
+      "branch": "main",
+      "upstreamDir": "skills/engineering/domain-modeling",
+      "localDir": "skills/domain-modeling",
+      "files": [
+        "SKILL.md",
+        "CONTEXT-FORMAT.md",
+        "ADR-FORMAT.md"
+      ]
+    },
     "diagnosing-bugs": {
       "repo": "mattpocock/skills",
       "branch": "main",
@@ -70,6 +81,15 @@
         "SKILL.md"
       ]
     },
+    "grill-with-docs": {
+      "repo": "mattpocock/skills",
+      "branch": "main",
+      "upstreamDir": "skills/engineering/grill-with-docs",
+      "localDir": "skills/grill-with-docs",
+      "files": [
+        "SKILL.md"
+      ]
+    },
     "karpathy-guidelines": {
       "repo": "multica-ai/andrej-karpathy-skills",
       "branch": "main",
@@ -82,7 +102,7 @@
     "planning-with-files-zh": {
       "repo": "othmanadi/planning-with-files",
       "branch": "master",
-      "upstreamDir": "skills/planning-with-files-zh",
+      "upstreamDir": "skills/i18n/planning-with-files-zh",
       "localDir": "skills/planning-with-files-zh",
       "files": [
         "SKILL.md",

@@ -1,7 +1,7 @@
 interface:
   display_name: "Grill Me"
-  short_description: "通过逐题追问彻底澄清并压力测试计划、设计、决策或想法"
-  default_prompt: "Use $grill-me to interview me relentlessly until every important decision is resolved."
+  short_description: "按决策前沿分轮追问，彻底澄清并压力测试计划、设计、决策或想法"
+  default_prompt: "Use $grill-me to interview me in rounds until every important decision is resolved."
 
 policy:
   allow_implicit_invocation: false

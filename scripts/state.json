@@ -1,36 +1,36 @@
 {
   "brainstorming": {
     "repo": "obra/superpowers",
-    "lastCommit": "05d90ac59248e6716f1a81e79757d850e62f4f7d",
-    "lastSyncedAt": "2026-07-24T00:27:16Z",
+    "lastCommit": "b36e0829c6d0140e93cfef2ca599b1b07d4a7797",
+    "lastSyncedAt": "2026-08-12T16:53:21Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "codebase-design": {
     "repo": "mattpocock/skills",
-    "lastCommit": "697d4ce9742da558fd1ba6697c8e9775e2e302dd",
-    "lastSyncedAt": "2026-07-13T11:57:18Z",
+    "lastCommit": "321658273cb1d20b76026717d027d505790106d4",
+    "lastSyncedAt": "2026-08-19T10:03:37Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "diagnosing-bugs": {
     "repo": "mattpocock/skills",
-    "lastCommit": "697d4ce9742da558fd1ba6697c8e9775e2e302dd",
-    "lastSyncedAt": "2026-07-13T11:57:18Z",
+    "lastCommit": "321658273cb1d20b76026717d027d505790106d4",
+    "lastSyncedAt": "2026-08-19T10:03:37Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "tdd": {
     "repo": "mattpocock/skills",
-    "lastCommit": "697d4ce9742da558fd1ba6697c8e9775e2e302dd",
-    "lastSyncedAt": "2026-07-13T11:57:18Z",
+    "lastCommit": "321658273cb1d20b76026717d027d505790106d4",
+    "lastSyncedAt": "2026-08-19T10:03:37Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "handoff": {
     "repo": "mattpocock/skills",
-    "lastCommit": "697d4ce9742da558fd1ba6697c8e9775e2e302dd",
-    "lastSyncedAt": "2026-07-13T11:57:18Z",
+    "lastCommit": "d28dfdc39beadc3142a33359b5cfa4765dcbd0bc",
+    "lastSyncedAt": "2026-08-15T20:42:06Z",
     "pendingCommit": null,
     "pendingDate": null
   },
@@ -43,22 +43,36 @@
   },
   "planning-with-files-zh": {
     "repo": "othmanadi/planning-with-files",
-    "lastCommit": "b04ffd9c8f9f93919649d197e5d4ec1bfc06fa14",
-    "lastSyncedAt": "2026-07-24T18:18:26Z",
+    "lastCommit": "0fb67596fa2c954310f93dc88617f4d4ce1557b3",
+    "lastSyncedAt": "2026-09-02T23:16:42Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "grill-me": {
     "repo": "mattpocock/skills",
-    "lastCommit": "697d4ce9742da558fd1ba6697c8e9775e2e302dd",
-    "lastSyncedAt": "2026-07-13T11:57:18Z",
+    "lastCommit": "fcf0071560d32913c9d4f820e0d7ca467c881619",
+    "lastSyncedAt": "2026-08-15T20:46:38Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "grilling": {
     "repo": "mattpocock/skills",
-    "lastCommit": "697d4ce9742da558fd1ba6697c8e9775e2e302dd",
-    "lastSyncedAt": "2026-07-13T11:57:18Z",
+    "lastCommit": "85f83d3fde1d3a90d5c9a657f6998c79a6c37308",
+    "lastSyncedAt": "2026-08-20T10:34:29Z",
+    "pendingCommit": null,
+    "pendingDate": null
+  },
+  "domain-modeling": {
+    "repo": "mattpocock/skills",
+    "lastCommit": "321658273cb1d20b76026717d027d505790106d4",
+    "lastSyncedAt": "2026-08-19T10:03:37Z",
+    "pendingCommit": null,
+    "pendingDate": null
+  },
+  "grill-with-docs": {
+    "repo": "mattpocock/skills",
+    "lastCommit": "447ca70872026d5b79d6073a546dac082117fed7",
+    "lastSyncedAt": "2026-08-15T20:48:40Z",
     "pendingCommit": null,
     "pendingDate": null
   }

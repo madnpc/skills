@@ -166,13 +166,29 @@ write_default_task_plan() {
     cat > "$1" << 'EOF'
 # Task Plan: [Brief Description]
 
+Use this file as the persistent roadmap for the task. Create it before complex work and update it whenever the active phase changes.
+
 ## Goal
+
+Describe the intended final result in one sentence.
+
 [One sentence describing the end state]
 
+## Next Step
+
+Record the single action to take next. Update it immediately when the current phase or near-term action changes.
+
+[The single next action]
+
 ## Current Phase
+
+Name the phase currently in progress.
+
 Phase 1
 
 ## Phases
+
+Break the task into three to seven verifiable phases. Status must be `pending`, `in_progress`, or `complete`.
 
 ### Phase 1: Requirements & Discovery
 - [ ] Understand user intent
@@ -200,13 +216,32 @@ Phase 1
 - [ ] Deliver to user
 - **Status:** pending
 
+## Key Questions
+
+Record important questions and update them when answers are known.
+
+1. [Question to answer]
+2. [Question to answer]
+
 ## Decisions Made
+
+Record important decisions and their rationale.
+
 | Decision | Rationale |
 |----------|-----------|
 
 ## Errors Encountered
-| Error | Resolution |
-|-------|------------|
+
+Record each distinct error, the number of attempts, and its resolution. Change approach before retrying a failed operation.
+
+| Error | Attempts | Resolution |
+|-------|----------|------------|
+|       | 1        |            |
+
+## Notes
+- Move phase status from `pending` to `in_progress` to `complete` as work advances.
+- Re-read the goal and next step before major decisions.
+- Record errors promptly to avoid repeating failed approaches.
 EOF
 }
 

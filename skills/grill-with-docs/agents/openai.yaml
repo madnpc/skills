@@ -1,0 +1,7 @@
+interface:
+  display_name: "Grill With Docs"
+  short_description: "压力测试设计，并在访谈中同步维护领域术语表和必要的 ADR"
+  default_prompt: "Use $grill-with-docs to stress-test my design while updating its domain glossary and qualifying ADRs."
+
+policy:
+  allow_implicit_invocation: false

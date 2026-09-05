@@ -1,4 +1,4 @@
 interface:
   display_name: "Grilling"
-  short_description: "逐题深挖并压力测试计划、设计、决策或想法，直到双方达成清晰共识"
-  default_prompt: "Use $grilling to stress-test my idea one decision at a time until we reach shared understanding."
+  short_description: "按决策前沿分轮深挖并压力测试计划、设计、决策或想法，直到双方达成清晰共识"
+  default_prompt: "Use $grilling to stress-test my idea in dependency-aware rounds until we reach shared understanding."
