@@ -67,6 +67,7 @@ else
 fi
 
 if [ ! -f "$PLAN_FILE" ]; then
+    [ "$GATE" -eq 1 ] && exit 0
     echo "[planning-with-files] No task_plan.md found — no active planning session."
     exit 0
 fi

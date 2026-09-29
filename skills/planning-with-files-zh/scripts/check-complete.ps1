@@ -49,6 +49,7 @@ if ($PlanFile -ne "") {
 }
 
 if (-not (Test-Path $PlanFile)) {
+    if ($Gate) { exit 0 }
     Write-Host '[planning-with-files] No task_plan.md found -- no active planning session.'
     exit 0
 }

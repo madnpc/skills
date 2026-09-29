@@ -18,7 +18,7 @@
 | `handoff` | 将未完成工作移交给新的代理或会话：工作交接、上下文交接、任务移交。 | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | `grill-me` | 仅由用户明确调用，启动按决策前沿分轮推进的高强度访谈，以澄清并压力测试计划、设计、决策或想法：拷问我、追问到底、深挖问题。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me) |
 | `grilling` | `grill-me` 的可复用访谈核心；按当前决策前沿分轮追问，每题给出建议，确认共识前不实施：压力测试、挑刺、决策树。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/grilling) |
-| `grill-with-docs` | 仅由用户明确调用；在压力测试设计的同时更新领域术语表，并为符合条件的决定记录 ADR：带文档拷问、边问边写文档、同步术语表、同步 ADR。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs) |
+| `grill-with-docs` | 仅由用户明确调用；在压力测试设计的同时更新 `docs/` 下的领域术语表、上下文地图，并为符合条件的决定记录 ADR：带文档拷问、边问边写文档、同步术语表、同步 ADR。 | [mattpocock/skills](https://github.com/mattpocock/skills/tree/main/skills/engineering/grill-with-docs) |
 
 ### 在 Claude Code 与 Codex 中通用
 

@@ -34,6 +34,12 @@ Do not:
 
 The only project file this skill may create or edit is the decision spec described below.
 
+## Establish shared understanding
+
+Before proposing features or an approach, identify the intended outcome, who it is for, and what success looks like. If purpose or intended use is missing, ask one focused question; do not infer intent from the app genre. When the request already supplies this information, reflect it instead of asking again.
+
+Write back a short understanding of the outcome, constraints, and success criteria, separating stated requirements from assumptions. Invite correction and incorporate the answer before treating it as the design brief. Carry that understanding into the decision spec and check proposed features and technical choices against it.
+
 ## Conversation
 
 1. Ask one focused question at a time until the decision is well framed. Prefer concrete choices when they genuinely reduce ambiguity.

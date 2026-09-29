@@ -2,7 +2,7 @@
 name: planning-with-files-zh
 description: "适用于需要跨会话持久追踪的复杂任务、研究或多阶段实施。自动恢复只读取项目规划文件；仅在用户明确要求时，session-catchup.py 才检查同项目会话元数据或输出受限且由 nonce 框定的不可信摘录。Use when work needs durable planning, coordination, or progress tracking across multiple steps or sessions. Do not use for small edits, simple explanations, copy changes, styling tweaks, or single-file fixes. 中文关键词：复杂任务、跨会话、任务规划、项目计划、分解任务、多步骤规划、复杂实现、实施计划、进度跟踪、文件规划、拆解项目。"
 metadata:
-  version: "3.16.0-npc404.1"
+  version: "3.21.0-npc404.1"
 ---
 
 # 文件规划系统
@@ -29,7 +29,11 @@ docs/.planning/
 
 用 `scripts/init-session.sh "<topic>"` 或 `scripts/init-session.ps1 "<topic>"` 创建新规划。脚本会生成 `plan-id` 并写入 `docs/.planning/.active_plan`。解析顺序为：`PLAN_ID` 环境变量、`.active_plan`，最后是最新的有效规划目录。
 
-旧的项目根目录规划仅为兼容读取；不得再在根目录新建 `task_plan.md`、`findings.md` 或 `progress.md`。
+恢复时复用选定规划，只补建缺失文件。并行任务必须在启动各宿主前设置各自的 `PLAN_ID`，或使用独立工作树；子进程里设置变量不会改变宿主环境。共享的 `.active_plan` 不代表会话绑定。共享计划与摘要由一个协调者维护，工作者只写分配的文件或自己的账本。
+
+本地解析脚本仍保留回退行为，因此调用前必须核对显式 `PLAN_ID` 对应的目录和 `task_plan.md` 确实存在；无效时先修正选择，不得继续回退到其他任务。并行任务存在多个规划而尚未绑定时，先明确本任务的 `PLAN_ID`。读取解析结果后，再确认它与本任务选择一致。
+
+旧的项目根目录规划仅在没有适用选择器或命名规划时兼容读取；不得再在根目录新建 `task_plan.md`、`findings.md` 或 `progress.md`。
 
 ## 第一步：恢复项目状态
 
@@ -71,7 +75,7 @@ $(command -v python3 || command -v python) <skill-dir>/scripts/session-catchup.p
 在任何复杂任务之前：
 
 1. **创建规划目录** — 运行 `scripts/init-session.sh "<topic>"` 或对应 PowerShell 脚本。
-2. **确认活动规划** — 读取 `docs/.planning/.active_plan` 与其中目录的三个规划文件。
+2. **确认活动规划** — 按上述规则解析并校验选定目录，再读取三个规划文件。
 3. **需要并行工作时设置 `PLAN_ID`** — 将当前会话固定到指定的 `plan-id`。
 4. **决策前重新读取计划** — 在注意力窗口中刷新目标
 5. **每个阶段完成后更新** — 标记完成，记录错误
