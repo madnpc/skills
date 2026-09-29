@@ -1,6 +1,6 @@
 # npc404 Skills
 
-《末日NPC都不太正常》的项目级 Agent Skills 仓库。这里仅维护可复用的工作流技能；每个技能都位于 `skills/<skill-name>/SKILL.md`，并通过 front matter 的 description 提供中英文触发关键词。
+日常工作用的 Agent Skills 仓库。这里仅维护可复用的工作流技能；每个技能都位于 `skills/<skill-name>/SKILL.md`，并通过 front matter 的 description 提供中英文触发关键词。
 
 ## Agent skills
 
