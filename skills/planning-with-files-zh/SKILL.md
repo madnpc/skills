@@ -2,7 +2,7 @@
 name: planning-with-files-zh
 description: "适用于需要跨会话持久追踪的复杂任务、研究或多阶段实施。自动恢复只读取项目规划文件；仅在用户明确要求时，session-catchup.py 才检查同项目会话元数据或输出受限且由 nonce 框定的不可信摘录。Use when work needs durable planning, coordination, or progress tracking across multiple steps or sessions. Do not use for small edits, simple explanations, copy changes, styling tweaks, or single-file fixes. 中文关键词：复杂任务、跨会话、任务规划、项目计划、分解任务、多步骤规划、复杂实现、实施计划、进度跟踪、文件规划、拆解项目。"
 metadata:
-  version: "3.21.0-npc404.1"
+  version: "3.29.1-npc404.1"
 ---
 
 # 文件规划系统
@@ -81,6 +81,26 @@ $(command -v python3 || command -v python) <skill-dir>/scripts/session-catchup.p
 5. **每个阶段完成后更新** — 标记完成，记录错误
 
 > **注意：** 规划文件位于 `docs/.planning/<plan-id>/`，不是技能安装目录或项目根目录。
+
+## 新计划的格式校验
+
+创建新任务时运行上述初始化脚本，再编辑生成的阶段模板。实现前，以及修改阶段结构后，用技能目录中的脚本检查明确的计划路径。
+
+```sh
+sh "<skill-dir>/scripts/check-complete.sh" --validate docs/.planning/<plan-id>/task_plan.md
+```
+
+PowerShell 使用 `check-complete.ps1 -Validate -PlanFile docs/.planning/<plan-id>/task_plan.md`。阶段标题使用 `### 阶段 N：名称` 或已有英文模板的 `### Phase N: Name`，每个阶段只有一个 `pending`、`in_progress` 或 `complete` 状态。支持 `**状态：**`、`**Status:**` 和已有的 `[状态值]` 格式。检查忽略代码块和引用中的示例，缺失状态、重复状态和未闭合代码块会导致校验失败。
+
+保留已有计划。校验失败时说明具体格式问题，再按任务范围修正；无法运行脚本时，按附带模板编写并说明校验未执行。格式校验独立于任务完成状态和 SHA-256 完整性认证。修改已认证的计划后，按现有授权重新认证，再恢复读取。
+
+## 列出、归档和恢复计划
+
+恢复任务前可运行 `sh "<skill-dir>/scripts/set-active-plan.sh" --list`，PowerShell 使用 `set-active-plan.ps1 -List`。需要结构化路径和阶段状态时，添加 `--json` 或 `-Json`。列表会显示 `docs/.planning/` 下的命名计划，`[active]` 表示共享指针；每个并行宿主仍应设置自己的 `PLAN_ID`。
+
+发现多个计划或已完成的计划时，先展示清单。用户同意归档后，运行 `--archive <id>` 预览，再用 `--archive <id> --yes` 移至 `docs/.planning/.archive/`。`--restore <id> --yes` 恢复目录，`--list --archived` 查看归档。PowerShell 分别使用 `-Archive`、`-Restore`、`-Yes` 和 `-List -Archived`。
+
+清单查询按需执行。文件年龄或完成状态本身不代表归档授权。字段、分页和操作约束见 [plan-inventory.md](plan-inventory.md)。
 
 ## 核心模式
 
@@ -216,7 +236,8 @@ if 操作失败:
 自动化辅助脚本：
 
 - `scripts/init-session.sh` — 初始化所有规划文件
-- `scripts/check-complete.sh` — 验证所有阶段是否完成
+- `scripts/check-complete.sh` / `scripts/check-complete.ps1` — 报告阶段进度，或显式校验计划格式
+- `scripts/set-active-plan.sh` / `scripts/set-active-plan.ps1` — 选择共享计划、查询清单，以及预览或执行归档与恢复
 - `scripts/resolve-plan-dir.sh` — 解析活动规划目录
 - `scripts/attest-plan.sh` / `scripts/verify-plan.sh` — 写入并验证计划完整性
 - `scripts/session-catchup.py` — 显式查看同项目会话元数据或有限摘录；无参数运行不会访问会话存储

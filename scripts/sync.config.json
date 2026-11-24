@@ -9,7 +9,7 @@
       "localDir": "skills/brainstorming",
       "files": [
         "SKILL.md",
-        "spec-document-reviewer-prompt.md"
+        "builder-check-prompt.md"
       ]
     },
     "codebase-design": {
@@ -30,7 +30,7 @@
       "localDir": "skills/domain-modeling",
       "files": [
         "SKILL.md",
-        "CONTEXT-FORMAT.md",
+        "GLOSSARY-FORMAT.md",
         "ADR-FORMAT.md"
       ]
     },
@@ -113,7 +113,10 @@
         "scripts/session-catchup.py",
         "templates/findings.md",
         "templates/progress.md",
-        "templates/task_plan.md"
+        "templates/task_plan.md",
+        "plan-inventory.md",
+        "scripts/set-active-plan.sh",
+        "scripts/set-active-plan.ps1"
       ]
     }
   }

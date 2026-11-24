@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Check if all phases in task_plan.md are complete
 # Default invocation: advisory echo, always exits 0 (Stop hook status report).
+# With --validate: check phase structure, exiting 1 for invalid input.
 # With --gate: deliberate completion gate, opt-in per plan via <plan-dir>/.mode.
 # Used by Stop hook to report task completion status.
 #
@@ -32,13 +33,13 @@
 
 # issue #195: per-invocation opt-out (PLANNING_DISABLED=1) for one-shot/CI
 # sessions that share a cwd with a plan but never opted into it.
-[ "${PLANNING_DISABLED:-}" = "1" ] && exit 0
-
 GATE=0
+VALIDATE=0
 PLAN_FILE=""
 for _arg in "$@"; do
     case "$_arg" in
         --gate) GATE=1 ;;
+        --validate) VALIDATE=1 ;;
         *)
             if [ -z "$PLAN_FILE" ]; then
                 PLAN_FILE="$_arg"
@@ -46,6 +47,8 @@ for _arg in "$@"; do
             ;;
     esac
 done
+
+[ "${PLANNING_DISABLED:-}" = "1" ] && [ "$VALIDATE" -eq 0 ] && exit 0
 
 PLAN_DIR=""
 if [ -n "${PLAN_FILE}" ]; then
@@ -67,44 +70,85 @@ else
 fi
 
 if [ ! -f "$PLAN_FILE" ]; then
+    if [ "$VALIDATE" -eq 1 ]; then
+        echo "[planning-with-files] Plan format invalid: file not found: $PLAN_FILE" >&2
+        exit 1
+    fi
     [ "$GATE" -eq 1 ] && exit 0
     echo "[planning-with-files] No task_plan.md found — no active planning session."
     exit 0
 fi
 
-# Count total phases
-TOTAL=$(grep -c "### Phase" "$PLAN_FILE" || true)
+# Count native statuses inside real phases, excluding fenced examples (#377).
+PLAN_COUNTS=$(LC_ALL=C awk '
+        function finish_phase() {
+            if (in_phase) {
+                if (status_count != 1) invalid = 1
+                else {
+                    if (phase_status != "in_progress") counts[phase_status]++
+                }
+                if (has_active_status) {
+                    counts["in_progress"]++
+                    if (active_heading == "") active_heading = heading
+                }
+            }
+            in_phase = 0; status_count = 0; phase_status = ""; has_active_status = 0
+        }
+        function fenced(line,    trimmed, marker, run) {
+            trimmed = line; sub(/^ ? ? ?/, "", trimmed)
+            if (line ~ /^ ? ? ?```/ || line ~ /^ ? ? ?~~~/) {
+                marker = substr(trimmed, 1, 1); run = 0
+                while (substr(trimmed, run + 1, 1) == marker) run++
+                if (fence == "" && marker == "`" && index(substr(trimmed, run + 1), "`")) return 0
+                if (fence == "") { fence = marker; fence_length = run }
+                else if (marker == fence && run >= fence_length && substr(trimmed, run + 1) ~ /^[ \t]*$/) fence = ""
+                return 1
+            }
+            return fence != ""
+        }
+        function read_status(line,    token, boundary) {
+            while (match(line, /\*\*(Status:|状态：)\*\*[ \t]+(pending|in_progress|complete)([^A-Za-z0-9_]|$)|\[(pending|in_progress|complete)\]/)) {
+                token = substr(line, RSTART, RLENGTH)
+                boundary = substr(token, 1, 2) == "**" && token ~ /[^A-Za-z0-9_]$/
+                sub(/^\*\*(Status:|状态：)\*\*[ \t]+|^\[/, "", token)
+                sub(/[^a-z_].*$/, "", token)
+                status_count++; phase_status = token
+                if (token == "in_progress") has_active_status = 1
+                line = substr(line, RSTART + RLENGTH - boundary)
+            }
+        }
+        NR == 1 { sub(/^\357\273\277/, "") }
+        { sub(/\r$/, "") }
+        fenced($0) || /^ ? ? ?>/ { next }
+        /^ ? ? ?### (Phase|阶段)([0-9:]|-[0-9])/ { finish_phase(); malformed_heading = 1; next }
+        /^ ? ? ?### (Phase|阶段)([ \t]|$)/ {
+            finish_phase(); total++; in_phase = 1; heading = $0
+        }
+        !/^ ? ? ?### (Phase|阶段)([ \t]|$)/ && /^ ? ? ?(###|##|#)([ \t]|$)/ { finish_phase() }
+        in_phase { read_status($0) }
+        END {
+            finish_phase()
+            printf "%d %d %d %d %d %d\n%s\n", total, counts["complete"], counts["in_progress"], counts["pending"], invalid, (fence != "" || malformed_heading), active_heading
+        }
+    ' 2>/dev/null < "$PLAN_FILE") || PLAN_COUNTS="0 0 0 0 0 1"
+read -r TOTAL COMPLETE IN_PROGRESS PENDING INVALID UNKNOWN <<EOF
+$PLAN_COUNTS
+EOF
 
-# Count both formats per field and keep the larger of the two. A plan may mix
-# '**Status:** pending' on one phase with '[in_progress]' on another; counting
-# only the primary format (and falling back to inline ONLY when all three
-# primaries are zero) lost the inline count and let an in_progress plan slip
-# past the gate. Per-field max preserves the legacy single-format result
-# (the other format contributes 0) while catching mixed plans.
-COMPLETE_PRIMARY=$(grep -cF "**Status:** complete" "$PLAN_FILE" || true)
-IN_PROGRESS_PRIMARY=$(grep -cF "**Status:** in_progress" "$PLAN_FILE" || true)
-PENDING_PRIMARY=$(grep -cF "**Status:** pending" "$PLAN_FILE" || true)
+if [ "$VALIDATE" -eq 1 ]; then
+    if [ "$TOTAL" -eq 0 ] || [ "$INVALID" -ne 0 ] || [ "$UNKNOWN" -ne 0 ]; then
+        echo "[planning-with-files] Plan format invalid: use ### Phase or ### 阶段 headings with exactly one native status per phase."
+        exit 1
+    fi
+    printf '[planning-with-files] Plan format valid (%d phases).\n' "$TOTAL"
+    exit 0
+fi
 
-COMPLETE_INLINE=$(grep -c "\[complete\]" "$PLAN_FILE" || true)
-IN_PROGRESS_INLINE=$(grep -c "\[in_progress\]" "$PLAN_FILE" || true)
-PENDING_INLINE=$(grep -c "\[pending\]" "$PLAN_FILE" || true)
-
-: "${COMPLETE_PRIMARY:=0}"; : "${IN_PROGRESS_PRIMARY:=0}"; : "${PENDING_PRIMARY:=0}"
-: "${COMPLETE_INLINE:=0}";  : "${IN_PROGRESS_INLINE:=0}";  : "${PENDING_INLINE:=0}"
-
-if [ "$COMPLETE_INLINE" -gt "$COMPLETE_PRIMARY" ]; then COMPLETE="$COMPLETE_INLINE"; else COMPLETE="$COMPLETE_PRIMARY"; fi
-if [ "$IN_PROGRESS_INLINE" -gt "$IN_PROGRESS_PRIMARY" ]; then IN_PROGRESS="$IN_PROGRESS_INLINE"; else IN_PROGRESS="$IN_PROGRESS_PRIMARY"; fi
-if [ "$PENDING_INLINE" -gt "$PENDING_PRIMARY" ]; then PENDING="$PENDING_INLINE"; else PENDING="$PENDING_PRIMARY"; fi
-
-# Default to 0 if empty
-: "${TOTAL:=0}"
-: "${COMPLETE:=0}"
-: "${IN_PROGRESS:=0}"
-: "${PENDING:=0}"
-
-# issue #191: no "### Phase" headings -> not a phase-structured plan. Report
-# nothing rather than a false "0/0 phases complete" status. With TOTAL=0 the
-# gate can never legitimately block (IN_PROGRESS is also 0), so exit is safe.
+# Malformed input cannot prove completion or block a stop.
+if [ "$UNKNOWN" -ne 0 ] || [ "$INVALID" -ne 0 ]; then
+    echo "[planning-with-files] Plan format or read error: phase completion unavailable."
+    exit 0
+fi
 if [ "$TOTAL" -eq 0 ]; then
     exit 0
 fi
@@ -227,19 +271,8 @@ json_escape() {
         | tr '\001-\037' ' '
 }
 
-# first_in_progress_phase: heading text of the first phase whose Status is
-# in_progress. Reads the plan top-to-bottom, remembers the most recent
-# "### " heading, and prints it (with the "### " prefix stripped) at the first
-# in_progress status line. Plain text only — no plan body beyond the heading.
-first_in_progress_phase() {
-    awk '
-        /^### / { heading = substr($0, 5); next }
-        /\*\*Status:\*\* in_progress/ { print heading; exit }
-        /\[in_progress\]/            { print heading; exit }
-    ' "$PLAN_FILE"
-}
-
-PHASE_NAME="$(first_in_progress_phase)"
+# Use the same parsed phase that supplied the active status.
+PHASE_NAME="$(printf '%s\n' "$PLAN_COUNTS" | sed -n '2s/^ *### //p')"
 if [ -z "${PHASE_NAME}" ]; then
     PHASE_NAME="unknown phase"
 fi

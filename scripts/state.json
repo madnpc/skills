@@ -1,36 +1,36 @@
 {
   "brainstorming": {
     "repo": "obra/superpowers",
-    "lastCommit": "5bf4e78011075bcfc0dc295f0724994cd123ee71",
-    "lastSyncedAt": "2026-09-19T00:31:35Z",
+    "lastCommit": "22f0b463e7a5e579904dd6211a520321035526f7",
+    "lastSyncedAt": "2026-11-03T22:17:07Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "codebase-design": {
     "repo": "mattpocock/skills",
-    "lastCommit": "321658273cb1d20b76026717d027d505790106d4",
-    "lastSyncedAt": "2026-08-19T10:03:37Z",
+    "lastCommit": "7739eaed7f8f3915437a8def198a6d0d7206dbc7",
+    "lastSyncedAt": "2026-10-29T10:24:04Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "diagnosing-bugs": {
     "repo": "mattpocock/skills",
-    "lastCommit": "321658273cb1d20b76026717d027d505790106d4",
-    "lastSyncedAt": "2026-08-19T10:03:37Z",
+    "lastCommit": "f3fc5632f401156837ee3872f14fe33ccf1024ea",
+    "lastSyncedAt": "2026-10-07T10:22:44Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "tdd": {
     "repo": "mattpocock/skills",
-    "lastCommit": "321658273cb1d20b76026717d027d505790106d4",
-    "lastSyncedAt": "2026-08-19T10:03:37Z",
+    "lastCommit": "3f599139104dfceabc7754eeb91319802f85e042",
+    "lastSyncedAt": "2026-10-07T10:21:08Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "handoff": {
     "repo": "mattpocock/skills",
-    "lastCommit": "d28dfdc39beadc3142a33359b5cfa4765dcbd0bc",
-    "lastSyncedAt": "2026-08-15T20:42:06Z",
+    "lastCommit": "0f5e033ebc47b142f5ffa56a582ede6d9d9bada3",
+    "lastSyncedAt": "2026-10-06T12:49:26Z",
     "pendingCommit": null,
     "pendingDate": null
   },
@@ -43,8 +43,8 @@
   },
   "planning-with-files-zh": {
     "repo": "othmanadi/planning-with-files",
-    "lastCommit": "51c1caa27f9fefe259e45a7cc92fa79ee8787cd7",
-    "lastSyncedAt": "2026-09-27T02:43:01Z",
+    "lastCommit": "54afe6f86235a16b15e2828ac57aca1bf914552f",
+    "lastSyncedAt": "2026-11-23T08:42:26Z",
     "pendingCommit": null,
     "pendingDate": null
   },
@@ -57,15 +57,15 @@
   },
   "grilling": {
     "repo": "mattpocock/skills",
-    "lastCommit": "85f83d3fde1d3a90d5c9a657f6998c79a6c37308",
-    "lastSyncedAt": "2026-08-20T10:34:29Z",
+    "lastCommit": "7739eaed7f8f3915437a8def198a6d0d7206dbc7",
+    "lastSyncedAt": "2026-10-29T10:24:04Z",
     "pendingCommit": null,
     "pendingDate": null
   },
   "domain-modeling": {
     "repo": "mattpocock/skills",
-    "lastCommit": "321658273cb1d20b76026717d027d505790106d4",
-    "lastSyncedAt": "2026-08-19T10:03:37Z",
+    "lastCommit": "d80fa0f4ebe0c5714af0adf8670336065233ecc6",
+    "lastSyncedAt": "2026-09-17T08:29:58Z",
     "pendingCommit": null,
     "pendingDate": null
   },

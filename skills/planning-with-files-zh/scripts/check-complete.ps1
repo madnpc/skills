@@ -1,5 +1,6 @@
 # Check if all phases in task_plan.md are complete
 # Default invocation: advisory echo, always exits 0 (Stop hook status report).
+# With -Validate: check phase structure, exiting 1 for invalid input.
 # With -Gate: deliberate completion gate, opt-in per plan via <plan-dir>/.mode.
 # Used by Stop hook to report task completion status.
 #
@@ -17,12 +18,13 @@
 
 param(
     [string]$PlanFile = "",
-    [switch]$Gate
+    [switch]$Gate,
+    [switch]$Validate
 )
 
 # issue #195: per-invocation opt-out (PLANNING_DISABLED=1) for one-shot/CI
 # sessions that share a cwd with a plan but never opted into it.
-if ($env:PLANNING_DISABLED -eq '1') { exit 0 }
+if ($env:PLANNING_DISABLED -eq '1' -and -not $Validate) { exit 0 }
 
 if ($PlanFile -ne "") {
     $PlanDir = Split-Path -Parent $PlanFile
@@ -48,42 +50,100 @@ if ($PlanFile -ne "") {
     }
 }
 
-if (-not (Test-Path $PlanFile)) {
+if (-not (Test-Path -LiteralPath $PlanFile -PathType Leaf)) {
+    if ($Validate) {
+        Write-Output "[planning-with-files] Plan format invalid: file not found: $PlanFile"
+        exit 1
+    }
     if ($Gate) { exit 0 }
     Write-Host '[planning-with-files] No task_plan.md found -- no active planning session.'
     exit 0
 }
 
-# Read file content
-$content = Get-Content $PlanFile -Raw
-
-# Count total phases
-$TOTAL = ([regex]::Matches($content, "### Phase")).Count
-
-# Count both formats per field and keep the larger of the two. A plan may mix
-# '**Status:** pending' on one phase with '[in_progress]' on another; counting
-# only the primary format (and falling back to inline ONLY when all three
-# primaries are zero) lost the inline count and let an in_progress plan slip
-# past the gate. Per-field max preserves the legacy single-format result
-# (the other format contributes 0) while catching mixed plans.
-$completePrimary = ([regex]::Matches($content, "\*\*Status:\*\* complete")).Count
-$inProgressPrimary = ([regex]::Matches($content, "\*\*Status:\*\* in_progress")).Count
-$pendingPrimary = ([regex]::Matches($content, "\*\*Status:\*\* pending")).Count
-
-$completeInline = ([regex]::Matches($content, "\[complete\]")).Count
-$inProgressInline = ([regex]::Matches($content, "\[in_progress\]")).Count
-$pendingInline = ([regex]::Matches($content, "\[pending\]")).Count
-
-$COMPLETE = [Math]::Max($completePrimary, $completeInline)
-$IN_PROGRESS = [Math]::Max($inProgressPrimary, $inProgressInline)
-$PENDING = [Math]::Max($pendingPrimary, $pendingInline)
-
-# issue #191: no "### Phase" headings -> not a phase-structured plan. Report
-# nothing rather than a false "0/0 phases complete" status. With TOTAL=0 the
-# gate can never legitimately block (IN_PROGRESS is also 0), so exit is safe.
-if ($TOTAL -eq 0) {
+# Read the plan as UTF-8
+try {
+    $content = Get-Content -LiteralPath $PlanFile -Raw -Encoding UTF8 -ErrorAction Stop
+} catch {
+    Write-Output '[planning-with-files] Plan read error: phase completion unavailable.'
+    if ($Validate) { exit 1 }
     exit 0
 }
+
+# Count phase-scoped statuses
+# Count native statuses inside real phases, excluding fenced examples (#377).
+$counts = @{ total = 0; complete = 0; in_progress = 0; pending = 0 }
+$phase = $null
+$invalid = $false
+$activeHeading = ""
+$fence = ""
+$fenceLength = 0
+$malformedHeading = $false
+function Complete-Phase {
+    if ($null -ne $script:phase) {
+        if ($script:phase.Statuses.Count -ne 1) { $script:invalid = $true }
+        else {
+            $state = $script:phase.Statuses[0]
+            if ($state -ne 'in_progress') { $script:counts[$state]++ }
+        }
+        if ($script:phase.Statuses -contains 'in_progress') {
+            $script:counts.in_progress++
+            if (-not $script:activeHeading) { $script:activeHeading = $script:phase.Heading }
+        }
+    }
+    $script:phase = $null
+}
+foreach ($line in (($content -creplace '^\uFEFF', '') -split '\r?\n')) {
+    if ($fence) {
+        if ($line -match ('^ {0,3}' + [regex]::Escape($fence) + '{' + $fenceLength + ',}[ \t]*$')) { $fence = "" }
+        continue
+    }
+    if ($line -match '^ {0,3}(`{3,}|~{3,})' -and
+        ($Matches[1][0] -eq '~' -or -not $line.Substring($Matches[0].Length).Contains('`'))) {
+        $fence = $Matches[1].Substring(0, 1); $fenceLength = $Matches[1].Length
+        continue
+    }
+    if ($line -match '^ {0,3}>') { continue }
+    if ($line -cmatch '^ {0,3}### (?:Phase|\u9636\u6bb5)(?:[0-9:]|-[0-9])') {
+        Complete-Phase
+        $malformedHeading = $true
+        continue
+    }
+    if ($line -cmatch '^ {0,3}### (?:Phase|\u9636\u6bb5)(?:[ \t]|$)') {
+        Complete-Phase
+        $counts.total++
+        $phase = @{ Heading = $line; Statuses = @() }
+    } elseif ($line -match '^ {0,3}#{1,3}(?:[ \t]|$)') {
+        Complete-Phase
+    }
+    if ($null -ne $phase) {
+        foreach ($match in [regex]::Matches($line, '\*\*(?:Status:|\u72b6\u6001\uff1a)\*\*[ \t]+(pending|in_progress|complete)(?![A-Za-z0-9_])|\[(pending|in_progress|complete)\]')) {
+            $state = $match.Groups[1].Value
+            if (-not $state) { $state = $match.Groups[2].Value }
+            $phase.Statuses += $state
+        }
+    }
+}
+Complete-Phase
+$TOTAL = $counts.total
+$COMPLETE = $counts.complete
+$IN_PROGRESS = $counts.in_progress
+$PENDING = $counts.pending
+
+if ($Validate) {
+    if ($TOTAL -eq 0 -or $invalid -or $fence -or $malformedHeading) {
+        Write-Output '[planning-with-files] Plan format invalid: use ### Phase headings or the Chinese template headings with exactly one native status per phase.'
+        exit 1
+    }
+    Write-Output ('[planning-with-files] Plan format valid (' + $TOTAL + ' phases).')
+    exit 0
+}
+
+# Invalid input cannot prove completion or block a stop.
+if ($invalid -or $fence -or $malformedHeading) {
+    Write-Output '[planning-with-files] Plan format or read error: phase completion unavailable.'
+    exit 0
+}
+if ($TOTAL -eq 0) { exit 0 }
 
 # advisory_report: the v2.43 status echo.
 function Write-AdvisoryReport {
@@ -195,22 +255,8 @@ if ($blocks -gt 0 -and $ledgerNow -eq $ledgerPrev) {
 }
 
 # All guards passed: block the stop.
-# Get-FirstInProgressPhase: heading text of the first phase whose Status is
-# in_progress. Plain text only -- no plan body beyond the heading.
-function Get-FirstInProgressPhase {
-    $heading = ""
-    foreach ($line in ($content -split "`n")) {
-        $trimmed = $line.TrimEnd("`r")
-        if ($trimmed -match '^### (.*)$') {
-            $heading = $Matches[1]
-        } elseif ($trimmed -match '\*\*Status:\*\* in_progress' -or $trimmed -match '\[in_progress\]') {
-            return $heading
-        }
-    }
-    return ""
-}
-
-$phaseName = Get-FirstInProgressPhase
+# Use the same parsed phase that supplied the active status.
+$phaseName = $activeHeading -replace '^ *### ', ''
 if ($phaseName -eq "") { $phaseName = "unknown phase" }
 
 # JSON-escape: backslash and double-quote, plus every bare control character

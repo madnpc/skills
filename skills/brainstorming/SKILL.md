@@ -36,17 +36,25 @@ The only project file this skill may create or edit is the decision spec describ
 
 ## Establish shared understanding
 
+Read the supplied context and the relevant existing project material before asking questions. Reuse decisions already made and facts the project answers.
+
 Before proposing features or an approach, identify the intended outcome, who it is for, and what success looks like. If purpose or intended use is missing, ask one focused question; do not infer intent from the app genre. When the request already supplies this information, reflect it instead of asking again.
 
 Write back a short understanding of the outcome, constraints, and success criteria, separating stated requirements from assumptions. Invite correction and incorporate the answer before treating it as the design brief. Carry that understanding into the decision spec and check proposed features and technical choices against it.
 
 ## Conversation
 
-1. Ask one focused question at a time until the decision is well framed. Prefer concrete choices when they genuinely reduce ambiguity.
+1. Ask one focused question at a time until the decision is well framed. Use an open question to discover purpose in the user's own words. Once purpose is clear, offer concrete choices when they help resolve a decision.
 2. State the assumptions and constraints that matter. Surface unknowns instead of silently filling them in.
 3. Offer 2–3 viable directions only when a real choice remains. For each, explain the primary benefit, primary cost, and the condition under which it is the better choice.
 4. Recommend one direction, or explicitly say that the decision needs more information. Do not invent certainty.
 5. Iterate until the user confirms a direction or asks to stop.
+
+Ask only when the answer would change the design. For choices the user has delegated, state your proposal and its reason so they can correct it. Present the viable approaches before writing the spec.
+
+As each part becomes clear, briefly reflect the outcome, behavior, or constraint back to the user and invite correction. Keep user statements distinct from your proposals. Include a small text sketch when it makes a layout or flow easier to understand.
+
+If the user asks to skip the design discussion and proceed, summarize any significant implementation choice and finish this skill. Continue with the user's requested workflow.
 
 ## Design validation
 
@@ -75,7 +83,9 @@ Do not include implementation steps, task assignments, code structure, file-by-f
 
 ## Spec self-review
 
-Before finalizing, remove placeholders and resolve contradictions. Check that the decision, requirements, trade-offs, scope, and open questions agree with one another. Use [spec-document-reviewer-prompt.md](spec-document-reviewer-prompt.md) only when an independent spec review is explicitly permitted.
+Before finalizing, remove placeholders and resolve contradictions. Check that the decision, requirements, trade-offs, scope, and open questions agree with one another. Read the spec as the person who will use it and identify consequential guesses they would still have to make. Use [builder-check-prompt.md](builder-check-prompt.md) when an independent spec review is explicitly permitted.
+
+Resolve questions already answered by the project or conversation. Settle minor choices within the delegated scope and label them as your calls. Bring consequential questions requiring the user's decision together, ordered by importance, then update the spec with their answers.
 
 ## Final response
 
